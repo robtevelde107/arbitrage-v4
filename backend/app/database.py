@@ -12,12 +12,20 @@ used throughout the application.
 from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 from .settings import get_settings
 
 
 settings = get_settings()
+
+# SQLAlchemy declarative base.
+#
+# We expose a `Base` object so that models can inherit from it and
+# register themselves with SQLAlchemy's metadata.  Without this,
+# attempts to import `Base` from `app.database` in other modules would
+# fail on Python 3.9, causing runtime errors during app startup.
+Base = declarative_base()
 
 # Create the async engine. The pool_pre_ping flag ensures connections are
 # validated prior to use, preventing stale connections from raising errors.
