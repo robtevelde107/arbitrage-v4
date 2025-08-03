@@ -23,6 +23,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column
 
+# Python 3.9 compatibility: import generics for type annotations
+from typing import List, Optional
+
 
 class Base(DeclarativeBase):
     pass
@@ -40,13 +43,14 @@ class User(Base):
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
-    exchange_keys: Mapped[list[ExchangeKey]] = relationship(
+    # Use List instead of list for Python 3.9 compatibility
+    exchange_keys: Mapped[List["ExchangeKey"]] = relationship(
         "ExchangeKey", back_populates="user", cascade="all, delete-orphan"
     )
-    bot_configs: Mapped[list[BotConfig]] = relationship(
+    bot_configs: Mapped[List["BotConfig"]] = relationship(
         "BotConfig", back_populates="user", cascade="all, delete-orphan"
     )
-    trade_logs: Mapped[list[TradeLog]] = relationship(
+    trade_logs: Mapped[List["TradeLog"]] = relationship(
         "TradeLog", back_populates="user", cascade="all, delete-orphan"
     )
 
@@ -61,7 +65,8 @@ class ExchangeKey(Base):
     exchange: Mapped[str] = mapped_column(String(100), nullable=False)
     api_key: Mapped[str] = mapped_column(String(255), nullable=False)
     api_secret: Mapped[str] = mapped_column(String(255), nullable=False)
-    api_password: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Optional[str] instead of str | None for Python 3.9 compatibility
+    api_password: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     is_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationship
@@ -107,7 +112,8 @@ class TradeLog(Base):
     profit: Mapped[float] = mapped_column(Float)
     mode: Mapped[str] = mapped_column(String(10))  # sandbox or live
     status: Mapped[str] = mapped_column(String(50), default="executed")
-    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Optional[str] instead of str | None for Python 3.9 compatibility
+    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationship
     user: Mapped[User] = relationship("User", back_populates="trade_logs")
