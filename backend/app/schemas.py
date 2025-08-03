@@ -11,6 +11,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List
 
+# Pydantic imports
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -28,7 +29,8 @@ class UserOut(UserBase):
     is_superuser: bool
 
     class Config:
-        orm_mode = True
+        # Pydantic v2: use from_attributes instead of orm_mode
+        from_attributes = True
 
 
 class ExchangeKeyBase(BaseModel):
@@ -48,11 +50,13 @@ class ExchangeKeyOut(ExchangeKeyBase):
     user_id: int
 
     class Config:
-        orm_mode = True
+        # Pydantic v2: use from_attributes instead of orm_mode
+        from_attributes = True
 
 
 class BotConfigBase(BaseModel):
-    mode: str = Field(default="sandbox", regex="^(sandbox|live)$")
+    # Use pattern instead of deprecated regex for Pydantic v2 compatibility
+    mode: str = Field(default="sandbox", pattern=r"^(sandbox|live)$")  # sandbox or live
     coins: str = Field(default="BTC,ETH")  # comma separated list
     budget: float = 0.0
     max_trade_size: float = 0.0
@@ -73,7 +77,8 @@ class BotConfigOut(BotConfigBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        # Pydantic v2: use from_attributes instead of orm_mode
+        from_attributes = True
 
 
 class TradeLogOut(BaseModel):
@@ -92,7 +97,8 @@ class TradeLogOut(BaseModel):
     error_message: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        # Pydantic v2: use from_attributes instead of orm_mode
+        from_attributes = True
 
 
 class ApiKeyOut(BaseModel):
